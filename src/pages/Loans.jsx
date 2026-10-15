@@ -38,6 +38,7 @@ function ReturnLoan({ loan, onDone, onClose }) {
   const { busy, error, run } = useAction()
   const submit = async (e) => {
     e.preventDefault()
+    if (outcome === 'LOST' && !window.confirm('Déclarer cet exemplaire perdu ? Le prêt sera clos sans retour.')) return
     const ok = await run(() => post(path(`/loans/${loan.id}/return/`), { outcome, notes }))
     if (ok) onDone()
   }

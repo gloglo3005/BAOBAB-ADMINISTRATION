@@ -49,6 +49,8 @@ export default function Members() {
   const members = rows(data)
 
   const act = async (m, name) => {
+    const warn = { suspend: 'Suspendre ce membre ? Il ne pourra plus emprunter.', reject: 'Refuser cette demande d\'adhésion ?' }[name]
+    if (warn && !window.confirm(warn)) return
     const ok = await action.run(() => post(path(`/members/${m.id}/${name}/`)))
     if (ok) reload()
   }

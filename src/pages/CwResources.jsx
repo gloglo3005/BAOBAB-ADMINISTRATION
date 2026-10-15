@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { get, patch, post } from '../api'
 import { useOrg } from '../org'
+import { EditModal } from './CwShared'
 import { Badge, Empty, ErrorBox, Field, Loading, Modal, PageHeader, label, rows, useAction, useFetch } from '../ui'
 
 const TYPES = ['DESK', 'ROOM', 'OTHER']
@@ -10,6 +11,7 @@ export default function CwResources() {
   const action = useAction()
   const [zoneName, setZoneName] = useState('')
   const [adding, setAdding] = useState(false)
+  const [editing, setEditing] = useState(null) // { kind: 'zones' | 'resources', item }
   const [r, setR] = useState({ zone: '', code: '', name: '', resource_type: 'DESK', capacity: 1 })
   const zones = useFetch(() => get(path('/coworking/zones/'), { page_size: 100 }), [org.id])
   const resources = useFetch(() => get(path('/coworking/resources/'), { page_size: 100 }), [org.id])
@@ -48,7 +50,7 @@ export default function CwResources() {
         <div className="table-wrap"><table><tbody>
           {zoneList.map((z) => (
             <tr key={z.id}><td><strong>{z.name}</strong></td><td>{z.active ? <Badge value="ACTIVE" /> : <Badge value="inactive" tone="neutral" />}</td>
-              <td className="actions"><button className="btn btn-ghost btn-sm" onClick={() => toggle('zones', z)}>{z.active ? 'Désactiver' : 'Activer'}</button></td></tr>
+              <td className="actions"><button className="btn btn-ghost btn-sm" onClick={() => setEditing({ kind: 'zones', item: z })}>Modifier</button>{' '}<button className="btn btn-ghost btn-sm" onClick={() => toggle('zones', z)}>{z.active ? 'Désactiver' : 'Activer'}</button></td></tr>
           ))}
         </tbody></table></div>
       ))}
@@ -63,12 +65,29 @@ export default function CwResources() {
             <tbody>{rows(resources.data).map((x) => (
               <tr key={x.id}><td><strong>{x.code}</strong></td><td>{x.name}</td><td>{x.zone_name}</td><td>{label(x.resource_type)}</td><td>{x.capacity}</td>
                 <td>{x.active ? <Badge value="ACTIVE" /> : <Badge value="inactive" tone="neutral" />}</td>
-                <td className="actions"><button className="btn btn-ghost btn-sm" onClick={() => toggle('resources', x)}>{x.active ? 'Désactiver' : 'Activer'}</button></td></tr>
+                <td className="actions"><button className="btn btn-ghost btn-sm" onClick={() => setEditing({ kind: 'resources', item: x })}>Modifier</button>{' '}<button className="btn btn-ghost btn-sm" onClick={() => toggle('resources', x)}>{x.active ? 'Désactiver' : 'Activer'}</button></td></tr>
             ))}</tbody>
           </table></div>
         ))}
       </div>
 
+      {editing && (
+        <EditModal
+          title={editing.kind === 'zones' ? `Modifier la zone ${editing.item.name}` : `Modifier ${editing.item.code}`}
+          initial={editing.item}
+          fields={editing.kind === 'zones' ? [
+            { name: 'name', label: 'Nom', required: true }, { name: 'description', label: 'Description', type: 'textarea' },
+          ] : [
+            { name: 'zone', label: 'Zone', number: true, options: zoneList.map((z) => [z.id, z.name]) },
+            { name: 'code', label: 'Code', required: true }, { name: 'name', label: 'Nom', required: true },
+            { name: 'resource_type', label: 'Type', options: TYPES.map((t) => [t, label(t)]) },
+            { name: 'capacity', label: 'Capacité', type: 'number' }, { name: 'notes', label: 'Notes', type: 'textarea' },
+          ]}
+          onSave={(body) => patch(path(`/coworking/${editing.kind}/${editing.item.id}/`), body)}
+          onClose={() => setEditing(null)}
+          onDone={() => { setEditing(null); zones.reload(); resources.reload() }}
+        />
+      )}
       {adding && (
         <Modal title="Nouvelle ressource" onClose={() => setAdding(false)}>
           <form onSubmit={addResource}>

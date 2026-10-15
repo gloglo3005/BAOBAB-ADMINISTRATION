@@ -60,6 +60,7 @@ export default function BookDetail() {
     if (ok) { setEditing(false); reload() }
   }
   const toggleArchive = async () => {
+    if (book.active && !window.confirm('Archiver ce livre ? Il ne pourra plus être prêté.')) return
     const ok = await action.run(() => post(path(`/books/${id}/${book.active ? 'archive' : 'restore'}/`)))
     if (ok) reload()
   }

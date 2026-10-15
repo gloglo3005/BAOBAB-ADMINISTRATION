@@ -2,13 +2,7 @@ import { useState } from 'react'
 import { get, post } from '../api'
 import { useOrg } from '../org'
 import { Badge, Empty, ErrorBox, Field, Loading, Modal, PageHeader, Pager, Picker, dateTime, localToIso, money, rows, useAction, useFetch } from '../ui'
-
-export function usePickers(path) {
-  return {
-    customers: async (q) => rows(await get(path('/coworking/customers/'), { q, status: 'ACTIVE' })).map((c) => ({ id: c.id, label: `${c.customer_number} · ${c.first_name} ${c.last_name}` })),
-    resources: async (q) => rows(await get(path('/coworking/resources/'), { q, active: 'true' })).map((x) => ({ id: x.id, label: `${x.code} · ${x.name}` })),
-  }
-}
+import { NewPayment, usePickers } from './CwShared'
 
 function NewReservation({ onDone, onClose }) {
   const { path } = useOrg()
@@ -50,12 +44,18 @@ export default function CwReservations() {
   const [page, setPage] = useState(1)
   const [creating, setCreating] = useState(false)
   const [cancelling, setCancelling] = useState(null)
+  const [paying, setPaying] = useState(null)
+  const [notice, setNotice] = useState('')
   const [reason, setReason] = useState('')
   const action = useAction()
   const { data, loading, error, reload } = useFetch(() => get(path('/coworking/reservations/'), { status, date, page }), [org.id, status, date, page])
   const list = rows(data)
 
-  const noShow = async (r) => { if (await action.run(() => post(path(`/coworking/reservations/${r.id}/no-show/`)))) reload() }
+  const noShow = async (r) => { if (!window.confirm('Marquer cette réservation comme absence ?')) return; if (await action.run(() => post(path(`/coworking/reservations/${r.id}/no-show/`)))) reload() }
+  const checkIn = async (r) => {
+    setNotice('')
+    if (await action.run(() => post(path('/coworking/sessions/check-in/'), { reservation: String(r.id) }))) { setNotice(`Arrivée enregistrée pour ${r.customer_name}.`); reload() }
+  }
   const cancel = async (e) => {
     e.preventDefault()
     if (await action.run(() => post(path(`/coworking/reservations/${cancelling.id}/cancel/`), { reason }))) { setCancelling(null); setReason(''); reload() }
@@ -70,6 +70,7 @@ export default function CwReservations() {
         <input type="date" value={date} onChange={(e) => { setDate(e.target.value); setPage(1) }} />
       </div>
       <ErrorBox>{action.error || error}</ErrorBox>
+      {notice && <div className="alert alert-ok">{notice}</div>}
       {loading && <Loading />}
       {data && (list.length === 0 ? <Empty /> : (
         <div className="table-wrap"><table>
@@ -81,14 +82,16 @@ export default function CwReservations() {
               <td>{money(r.quoted_amount, r.currency)}<div className="muted">payé {money(r.amount_paid, r.currency)}</div></td>
               <td><Badge value={r.status} /></td>
               <td className="actions">{r.status === 'CONFIRMED' && (<>
+                <button className="btn btn-sm" disabled={action.busy} onClick={() => checkIn(r)}>Arrivée</button>{' '}
                 <button className="btn btn-ghost btn-sm" disabled={action.busy} onClick={() => noShow(r)}>Absent</button>{' '}
                 <button className="btn btn-ghost btn-sm" onClick={() => setCancelling(r)}>Annuler</button>
-              </>)}</td>
+              </>)}{r.status !== 'CANCELLED' && r.balance > 0 && <>{' '}<button className="btn btn-ghost btn-sm" onClick={() => setPaying(r)}>Encaisser</button></>}</td>
             </tr>
           ))}</tbody>
         </table></div>
       ))}
       <Pager page={page} count={data?.count || 0} onPage={setPage} />
+      {paying && <NewPayment initial={{ customer: { id: paying.customer, label: `${paying.customer_number} · ${paying.customer_name}` }, link: `reservation:${paying.id}`, amount: paying.balance }} onClose={() => setPaying(null)} onDone={() => { setPaying(null); reload() }} />}
       {creating && <NewReservation onClose={() => setCreating(false)} onDone={() => { setCreating(false); reload() }} />}
       {cancelling && (
         <Modal title="Annuler la réservation" onClose={() => setCancelling(null)}>

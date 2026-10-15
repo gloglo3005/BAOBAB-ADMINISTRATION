@@ -48,6 +48,8 @@ export default function Layout({ children }) {
               {link('/coworking/payments', 'Paiements')}
               {link('/coworking/customers', 'Clients')}
               {link('/coworking/resources', 'Zones & ressources')}
+              {link('/coworking/rates', 'Tarifs')}
+              {link('/coworking/settings', 'Réglages')}
             </>
           )}
           {user.is_platform_admin && (

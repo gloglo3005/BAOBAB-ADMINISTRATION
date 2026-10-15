@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { get, post } from '../api'
+import { get, patch, post } from '../api'
 import { useOrg } from '../org'
+import { EditModal } from './CwShared'
 import { Badge, Empty, ErrorBox, Field, Loading, Modal, PageHeader, Pager, rows, useAction, useFetch } from '../ui'
 
 export default function CwCustomers() {
@@ -8,6 +9,7 @@ export default function CwCustomers() {
   const [q, setQ] = useState('')
   const [page, setPage] = useState(1)
   const [creating, setCreating] = useState(false)
+  const [editing, setEditing] = useState(null)
   const [f, setF] = useState({ first_name: '', last_name: '', phone: '', email: '' })
   const action = useAction()
   const { data, loading, error, reload } = useFetch(() => get(path('/coworking/customers/'), { q, page }), [org.id, q, page])
@@ -26,13 +28,27 @@ export default function CwCustomers() {
       {loading && <Loading />}
       {data && (list.length === 0 ? <Empty /> : (
         <div className="table-wrap"><table>
-          <thead><tr><th>N°</th><th>Nom</th><th>Téléphone</th><th>Email</th><th>Statut</th></tr></thead>
+          <thead><tr><th>N°</th><th>Nom</th><th>Téléphone</th><th>Email</th><th>Statut</th><th /></tr></thead>
           <tbody>{list.map((c) => (
-            <tr key={c.id}><td>{c.customer_number}</td><td><strong>{c.first_name} {c.last_name}</strong></td><td>{c.phone || '—'}</td><td>{c.email || '—'}</td><td><Badge value={c.status} /></td></tr>
+            <tr key={c.id}><td>{c.customer_number}</td><td><strong>{c.first_name} {c.last_name}</strong></td><td>{c.phone || '—'}</td><td>{c.email || '—'}</td><td><Badge value={c.status} /></td><td className="actions"><button className="btn btn-ghost btn-sm" onClick={() => setEditing(c)}>Modifier</button></td></tr>
           ))}</tbody>
         </table></div>
       ))}
       <Pager page={page} count={data?.count || 0} onPage={setPage} />
+      {editing && (
+        <EditModal
+          title={`Modifier ${editing.customer_number}`}
+          initial={editing}
+          fields={[
+            { name: 'first_name', label: 'Prénom', required: true }, { name: 'last_name', label: 'Nom', required: true },
+            { name: 'phone', label: 'Téléphone' }, { name: 'email', label: 'Email', type: 'email' },
+            { name: 'status', label: 'Statut', options: [['ACTIVE', 'Actif'], ['SUSPENDED', 'Suspendu']] },
+          ]}
+          onSave={(body) => patch(path(`/coworking/customers/${editing.id}/`), body)}
+          onClose={() => setEditing(null)}
+          onDone={() => { setEditing(null); reload() }}
+        />
+      )}
       {creating && (
         <Modal title="Nouveau client" onClose={() => setCreating(false)}>
           <form onSubmit={submit}>

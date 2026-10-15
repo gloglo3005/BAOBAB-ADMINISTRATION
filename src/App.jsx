@@ -18,7 +18,9 @@ import CwCustomers from './pages/CwCustomers'
 import CwReservations from './pages/CwReservations'
 import CwSessions from './pages/CwSessions'
 import CwPayments from './pages/CwPayments'
-import { Loading } from './ui'
+import CwRates from './pages/CwRates'
+import CwSettings from './pages/CwSettings'
+import { Loading, NotFound } from './ui'
 
 function Protected({ children, platform, module }) {
   const { user, status } = useAuth()
@@ -57,9 +59,11 @@ export default function App() {
       <Route path="/coworking/sessions" element={page(<CwSessions />, { module: 'coworking' })} />
       <Route path="/coworking/payments" element={page(<CwPayments />, { module: 'coworking' })} />
       <Route path="/coworking/customers" element={page(<CwCustomers />, { module: 'coworking' })} />
+      <Route path="/coworking/rates" element={page(<CwRates />, { module: 'coworking' })} />
+      <Route path="/coworking/settings" element={page(<CwSettings />, { module: 'coworking' })} />
       <Route path="/coworking/resources" element={page(<CwResources />, { module: 'coworking' })} />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

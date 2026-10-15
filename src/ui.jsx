@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Component, useCallback, useEffect, useRef, useState } from 'react'
 import { errorMessage } from './api'
 
 // Charge des données et expose {data, loading, error, reload}.
@@ -183,3 +183,45 @@ export const localToIso = (v) => (v ? new Date(v).toISOString() : null)
 
 // Liste paginée DRF : renvoie {results, count} qu'il s'agisse d'une page ou d'un tableau simple.
 export const rows = (data) => (Array.isArray(data) ? data : data?.results || [])
+
+// Valeur « retardée » : sert à ne pas interroger l'API à chaque frappe.
+export function useDebounced(value, delay = 300) {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(t)
+  }, [value, delay])
+  return debounced
+}
+
+// Évite la page blanche : une erreur d'affichage montre un message et un bouton pour recharger.
+export class ErrorBoundary extends Component {
+  state = { failed: false }
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+  render() {
+    if (!this.state.failed) return this.props.children
+    return (
+      <div className="auth-page">
+        <div className="card auth-card">
+          <h2>Une erreur est survenue</h2>
+          <p className="muted">L'affichage a rencontré un problème. Rechargez la page ; si cela continue, contactez le support.</p>
+          <button className="btn" onClick={() => window.location.reload()}>Recharger</button>
+        </div>
+      </div>
+    )
+  }
+}
+
+export function NotFound({ home = '/' }) {
+  return (
+    <div className="auth-page">
+      <div className="card auth-card">
+        <h2>Page introuvable</h2>
+        <p className="muted">Cette adresse n'existe pas ou a été déplacée.</p>
+        <a className="btn" href={home}>Retour à l'accueil</a>
+      </div>
+    </div>
+  )
+}

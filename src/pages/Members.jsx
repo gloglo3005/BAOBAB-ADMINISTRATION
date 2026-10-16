@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { get, post } from '../api'
 import { useOrg } from '../org'
 import { Badge, Empty, ErrorBox, Field, Loading, Modal, PageHeader, Pager, dateOnly, rows, useAction, useFetch } from '../ui'
+import MemberEdit from './MemberEdit'
 
 const STATUSES = ['PENDING', 'ACCEPTED', 'SUSPENDED', 'REJECTED']
 const ACTIONS = {
@@ -43,6 +44,7 @@ export default function Members() {
   const [status, setStatus] = useState('')
   const [page, setPage] = useState(1)
   const [creating, setCreating] = useState(false)
+  const [editing, setEditing] = useState(null)
   const [code, setCode] = useState(null)
   const action = useAction()
   const { data, loading, error, reload } = useFetch(() => get(path('/members/'), { q, status, page }), [org.id, q, status, page])
@@ -90,7 +92,7 @@ export default function Members() {
                     {(ACTIONS[m.status] || []).map(([name, text]) => (
                       <button key={name} className="btn btn-ghost btn-sm" disabled={action.busy} onClick={() => act(m, name)}>{text}</button>
                     ))}{' '}
-                    <button className="btn btn-ghost btn-sm" disabled={action.busy} onClick={() => linkCode(m)}>Code de liaison</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => setEditing(m)}>Modifier</button>{' '}<button className="btn btn-ghost btn-sm" disabled={action.busy} onClick={() => linkCode(m)}>Code de liaison</button>
                   </td>
                 </tr>
               ))}
@@ -100,6 +102,7 @@ export default function Members() {
       ))}
       <Pager page={page} count={data?.count || 0} onPage={setPage} />
       {creating && <NewMember onClose={() => setCreating(false)} onDone={() => { setCreating(false); reload() }} />}
+      {editing && <MemberEdit member={editing} onClose={() => setEditing(null)} onDone={() => { setEditing(null); reload() }} />}
       {code && (
         <Modal title="Code de rattachement" onClose={() => setCode(null)}>
           <p>Pour <strong>{code.name}</strong>. À saisir par le lecteur dans l'application (usage unique).</p>

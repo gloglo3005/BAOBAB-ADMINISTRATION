@@ -73,6 +73,12 @@ export default function Loans() {
     [org.id, status, overdue, page],
   )
   const loans = rows(data)
+  const renewal = useAction()
+  const renew = async (l) => {
+    if (!window.confirm(`Renouveler le prêt de « ${l.book_title} » ?`)) return
+    const ok = await renewal.run(() => post(path(`/loans/${l.id}/renew/`)))
+    if (ok) reload()
+  }
   return (
     <>
       <PageHeader title="Prêts" subtitle="Circulation des exemplaires">
@@ -90,6 +96,7 @@ export default function Loans() {
         </label>
       </div>
       <ErrorBox>{error}</ErrorBox>
+      <ErrorBox>{renewal.error}</ErrorBox>
       {loading && <Loading />}
       {data && (loans.length === 0 ? <Empty /> : (
         <div className="table-wrap">
@@ -102,10 +109,10 @@ export default function Loans() {
                   <td>{l.inventory_code}</td>
                   <td>{l.member_name} <span className="muted">({l.member_number})</span></td>
                   <td>{dateTime(l.borrowed_at)}</td>
-                  <td>{dateOnly(l.due_date)}{l.is_overdue && <> <Badge value={`${l.days_overdue} j de retard`} tone="bad" /></>}</td>
+                  <td>{dateOnly(l.due_date)}{l.renewal_count > 0 && <span className="muted"> · renouvelé {l.renewal_count} fois</span>}{l.is_overdue && <> <Badge value={`${l.days_overdue} j de retard`} tone="bad" /></>}</td>
                   <td><Badge value={l.status} /></td>
                   <td className="actions">
-                    {l.status === 'ACTIVE' && <button className="btn btn-ghost btn-sm" onClick={() => setReturning(l)}>Retour</button>}
+                    {l.status === 'ACTIVE' && (<><button className="btn btn-ghost btn-sm" disabled={renewal.busy} onClick={() => renew(l)}>Renouveler</button>{' '}<button className="btn btn-ghost btn-sm" onClick={() => setReturning(l)}>Retour</button></>)}
                   </td>
                 </tr>
               ))}

@@ -1,13 +1,27 @@
-import { useState } from 'react'
+import InstallApp from './InstallApp'
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from './auth'
 import { useOrg } from './org'
+import { watchTables } from './responsiveTables'
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth()
   const { orgs, org, select } = useOrg()
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
+  useEffect(() => watchTables(), [])
+  useEffect(() => {
+    if (!open) return undefined
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = previous
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open])
   const link = (to, text, end) => (
     <NavLink to={to} end={end} onClick={close}>{text}</NavLink>
   )
@@ -36,7 +50,7 @@ export default function Layout({ children }) {
               {link('/library/books', 'Livres')}
               {link('/library/members', 'Membres')}
               {link('/library/loans', 'Prêts')}
-              {link('/library/imports', 'Import CSV')}
+              {link('/library/import', 'Import du catalogue')}
               {link('/library/settings', 'Catégories & emplacements')}
             </>
           )}
@@ -73,11 +87,17 @@ export default function Layout({ children }) {
         <div className="sidebar-foot">
           <strong>{user.first_name || user.email}</strong>
           <div>{role}</div>
+          <InstallApp />
           <button className="btn btn-ghost btn-sm" onClick={logout}>Se déconnecter</button>
         </div>
       </aside>
+      {open && <div className="backdrop" onClick={close} aria-hidden="true" />}
+      <header className="mobile-bar">
+        <button className="btn btn-ghost" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Ouvrir le menu">☰ Menu</button>
+        <strong>Baobab</strong>
+        {org && <span>{org.name}</span>}
+      </header>
       <main className="main">
-        <button className="btn btn-ghost menu-toggle" onClick={() => setOpen(!open)}>☰ Menu</button>
         {children}
       </main>
     </div>

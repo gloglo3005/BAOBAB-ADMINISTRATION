@@ -82,14 +82,15 @@ function buildUrl(path, params) {
 
 export async function api(path, { method = 'GET', body, params, auth = true } = {}, retry = true) {
   const headers = {}
-  if (body !== undefined) headers['Content-Type'] = 'application/json'
+  const isForm = typeof FormData !== 'undefined' && body instanceof FormData
+  if (body !== undefined && !isForm) headers['Content-Type'] = 'application/json'
   if (auth && tokens.get()?.access) headers.Authorization = `Bearer ${tokens.get().access}`
   let res
   try {
     res = await fetch(buildUrl(path, params), {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
     })
   } catch {
     throw new ApiError(0, { detail: "Impossible de joindre l'API. Le serveur Django est-il lancé ?" })
@@ -115,3 +116,5 @@ export async function api(path, { method = 'GET', body, params, auth = true } = 
 export const get = (path, params) => api(path, { params })
 export const post = (path, body = {}) => api(path, { method: 'POST', body })
 export const patch = (path, body = {}) => api(path, { method: 'PATCH', body })
+// Envoi d'un fichier (multipart) : body est un FormData.
+export const upload = (path, formData) => api(path, { method: 'POST', body: formData })

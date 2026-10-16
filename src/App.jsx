@@ -5,6 +5,8 @@ import Layout from './Layout'
 import Login from './pages/Login'
 import ChangePassword from './pages/ChangePassword'
 import Home from './pages/Home'
+import Import from './pages/Import'
+import ImportDetail from './pages/ImportDetail'
 import Platform from './pages/Platform'
 import PlatformOrg from './pages/PlatformOrg'
 import PlatformAudit from './pages/PlatformAudit'
@@ -17,8 +19,6 @@ import BookDetail from './pages/BookDetail'
 import Members from './pages/Members'
 import Loans from './pages/Loans'
 import Referentials from './pages/Referentials'
-import Imports from './pages/Imports'
-import ImportDetail from './pages/ImportDetail'
 import CwDashboard from './pages/CwDashboard'
 import CwResources from './pages/CwResources'
 import CwCustomers from './pages/CwCustomers'
@@ -65,9 +65,9 @@ export default function App() {
       <Route path="/library/books/:id" element={page(<BookDetail />, { module: 'library' })} />
       <Route path="/library/members" element={page(<Members />, { module: 'library' })} />
       <Route path="/library/loans" element={page(<Loans />, { module: 'library' })} />
+      <Route path="/library/import" element={page(<Import />, { module: 'library' })} />
+      <Route path="/library/import/:id" element={page(<ImportDetail />, { module: 'library' })} />
       <Route path="/library/settings" element={page(<Referentials />, { module: 'library' })} />
-      <Route path="/library/imports" element={page(<Imports />, { module: 'library' })} />
-      <Route path="/library/imports/:id" element={page(<ImportDetail />, { module: 'library' })} />
 
       <Route path="/coworking" element={page(<CwDashboard />, { module: 'coworking' })} />
       <Route path="/coworking/reservations" element={page(<CwReservations />, { module: 'coworking' })} />

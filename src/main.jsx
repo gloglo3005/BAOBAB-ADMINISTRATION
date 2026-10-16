@@ -6,6 +6,10 @@ import { AuthProvider } from './auth'
 import { OrgProvider } from './org'
 import { ErrorBoundary } from './ui'
 import './index.css'
+import './responsive.css'
+import { registerPwa } from './pwa'
+
+registerPwa()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

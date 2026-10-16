@@ -1,32 +1,34 @@
+import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { hasAdminAccess, useAuth } from './auth'
 import { useOrg } from './org'
 import Layout from './Layout'
 import Login from './pages/Login'
-import ChangePassword from './pages/ChangePassword'
-import Home from './pages/Home'
-import Import from './pages/Import'
-import ImportDetail from './pages/ImportDetail'
-import Platform from './pages/Platform'
-import PlatformOrg from './pages/PlatformOrg'
-import PlatformAudit from './pages/PlatformAudit'
-import Team from './pages/Team'
-import StructureSettings from './pages/StructureSettings'
-import Audit from './pages/Audit'
-import Dashboard from './pages/Dashboard'
-import Books from './pages/Books'
-import BookDetail from './pages/BookDetail'
-import Members from './pages/Members'
-import Loans from './pages/Loans'
-import Referentials from './pages/Referentials'
-import CwDashboard from './pages/CwDashboard'
-import CwResources from './pages/CwResources'
-import CwCustomers from './pages/CwCustomers'
-import CwReservations from './pages/CwReservations'
-import CwSessions from './pages/CwSessions'
-import CwPayments from './pages/CwPayments'
-import CwRates from './pages/CwRates'
-import CwSettings from './pages/CwSettings'
+const ChangePassword = lazy(() => import('./pages/ChangePassword'))
+const Home = lazy(() => import('./pages/Home'))
+const Import = lazy(() => import('./pages/Import'))
+const ImportDetail = lazy(() => import('./pages/ImportDetail'))
+const Platform = lazy(() => import('./pages/Platform'))
+const PlatformOrg = lazy(() => import('./pages/PlatformOrg'))
+const PlatformAudit = lazy(() => import('./pages/PlatformAudit'))
+const Team = lazy(() => import('./pages/Team'))
+const StructureSettings = lazy(() => import('./pages/StructureSettings'))
+const Audit = lazy(() => import('./pages/Audit'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Books = lazy(() => import('./pages/Books'))
+const BookDetail = lazy(() => import('./pages/BookDetail'))
+const Members = lazy(() => import('./pages/Members'))
+const Loans = lazy(() => import('./pages/Loans'))
+const Referentials = lazy(() => import('./pages/Referentials'))
+const CwDashboard = lazy(() => import('./pages/CwDashboard'))
+const CwResources = lazy(() => import('./pages/CwResources'))
+const CwCustomers = lazy(() => import('./pages/CwCustomers'))
+const CwReservations = lazy(() => import('./pages/CwReservations'))
+const CwSessions = lazy(() => import('./pages/CwSessions'))
+const CwPayments = lazy(() => import('./pages/CwPayments'))
+const CwRates = lazy(() => import('./pages/CwRates'))
+const CwSettings = lazy(() => import('./pages/CwSettings'))
+import Privacy from './pages/Privacy'
 import { Loading, NotFound } from './ui'
 
 function Protected({ children, platform, module, responsable }) {
@@ -43,12 +45,13 @@ function Protected({ children, platform, module, responsable }) {
 
 const page = (el, opts) => (
   <Protected {...opts}>
-    <Layout>{el}</Layout>
+    <Layout><Suspense fallback={<Loading />}>{el}</Suspense></Layout>
   </Protected>
 )
 
 export default function App() {
   return (
+    <Suspense fallback={<div className="auth-page"><Loading /></div>}>
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/password" element={<ChangePassword />} />
@@ -78,7 +81,9 @@ export default function App() {
       <Route path="/coworking/settings" element={page(<CwSettings />, { module: 'coworking' })} />
       <Route path="/coworking/resources" element={page(<CwResources />, { module: 'coworking' })} />
 
+      <Route path="/confidentialite" element={<Privacy />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </Suspense>
   )
 }

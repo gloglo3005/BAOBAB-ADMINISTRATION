@@ -5,6 +5,8 @@ import App from './App.jsx'
 import { AuthProvider } from './auth'
 import { OrgProvider } from './org'
 import { ErrorBoundary } from './ui'
+import NetStatus from './NetStatus'
+import CookieNotice from './CookieNotice'
 import './index.css'
 import './responsive.css'
 import { registerPwa } from './pwa'
@@ -18,6 +20,8 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <OrgProvider>
           <App />
+        <NetStatus />
+        <CookieNotice />
         </OrgProvider>
       </AuthProvider>
     </BrowserRouter>

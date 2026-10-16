@@ -11,7 +11,7 @@ export default function Layout({ children }) {
   const link = (to, text, end) => (
     <NavLink to={to} end={end} onClick={close}>{text}</NavLink>
   )
-  const role = user.is_platform_admin ? 'Administrateur global' : 'Personnel'
+  const role = user.is_platform_admin ? 'Administrateur global' : org?.role === 'ADMIN' ? 'Responsable de structure' : 'Personnel'
 
   return (
     <div className="shell">
@@ -52,10 +52,19 @@ export default function Layout({ children }) {
               {link('/coworking/settings', 'Réglages')}
             </>
           )}
+          {org?.role === 'ADMIN' && (
+            <>
+              <div className="nav-title">Ma structure</div>
+              {link('/team', 'Équipe')}
+              {link('/settings', 'Paramètres')}
+              {link('/audit', "Journal d'audit")}
+            </>
+          )}
           {user.is_platform_admin && (
             <>
               <div className="nav-title">Plateforme</div>
-              {link('/platform', 'Administration globale')}
+              {link('/platform', 'Structures', true)}
+              {link('/platform/audit', "Journal d'audit global")}
             </>
           )}
         </nav>

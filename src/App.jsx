@@ -6,6 +6,11 @@ import Login from './pages/Login'
 import ChangePassword from './pages/ChangePassword'
 import Home from './pages/Home'
 import Platform from './pages/Platform'
+import PlatformOrg from './pages/PlatformOrg'
+import PlatformAudit from './pages/PlatformAudit'
+import Team from './pages/Team'
+import StructureSettings from './pages/StructureSettings'
+import Audit from './pages/Audit'
 import Dashboard from './pages/Dashboard'
 import Books from './pages/Books'
 import BookDetail from './pages/BookDetail'
@@ -22,7 +27,7 @@ import CwRates from './pages/CwRates'
 import CwSettings from './pages/CwSettings'
 import { Loading, NotFound } from './ui'
 
-function Protected({ children, platform, module }) {
+function Protected({ children, platform, module, responsable }) {
   const { user, status } = useAuth()
   const { org } = useOrg()
   if (status === 'loading') return <div className="auth-page"><Loading /></div>
@@ -30,6 +35,7 @@ function Protected({ children, platform, module }) {
   if (user.must_change_password) return <Navigate to="/password" replace />
   if (platform && !user.is_platform_admin) return <Navigate to="/" replace />
   if (module && !org?.[`${module}_module`]) return <Navigate to="/" replace />
+  if (responsable && org?.role !== 'ADMIN') return <Navigate to="/" replace />
   return children
 }
 
@@ -46,6 +52,11 @@ export default function App() {
       <Route path="/password" element={<ChangePassword />} />
       <Route path="/" element={page(<Home />)} />
       <Route path="/platform" element={page(<Platform />, { platform: true })} />
+      <Route path="/platform/organizations/:id" element={page(<PlatformOrg />, { platform: true })} />
+      <Route path="/platform/audit" element={page(<PlatformAudit />, { platform: true })} />
+      <Route path="/team" element={page(<Team />, { responsable: true })} />
+      <Route path="/settings" element={page(<StructureSettings />, { responsable: true })} />
+      <Route path="/audit" element={page(<Audit />, { responsable: true })} />
 
       <Route path="/library" element={page(<Dashboard />, { module: 'library' })} />
       <Route path="/library/books" element={page(<Books />, { module: 'library' })} />

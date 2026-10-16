@@ -36,4 +36,4 @@ Les modules (bibliothèque / coworking) apparaissent selon les drapeaux de la st
 `src/api.js` (client + JWT) · `src/auth.jsx` · `src/org.jsx` (structure active) · `src/ui.jsx` (composants) · `src/pages/`.
 
 ## Pas encore fait
-Import CSV, API admin globale, gestion des agents, paramètres de prêt (routes backend à venir).
+Import CSV, renouvellement des prêts (routes backend à venir).

@@ -195,7 +195,22 @@ export function useDebounced(value, delay = 300) {
 }
 
 // Évite la page blanche : une erreur d'affichage montre un message et un bouton pour recharger.
-export class ErrorBoundary extends Component {
+function ErrorPage({ code, title, text, children }) {
+  return (
+    <div className="error-page">
+      <div className="error-card">
+        <svg className="error-logo" viewBox="0 0 64 64" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#1f4d3a" />
+          <path d="M30 54V34c-8 0-16-4-18-12 6 1 11 2 18 8V22c-6-2-10-6-10-12 7 2 11 6 12 11 1-5 5-9 12-11 0 6-4 10-10 12v8c7-6 12-7 18-8-2 8-10 12-18 12v20z" fill="#e8b04a" />
+        </svg>
+        <p className="error-code">{code}</p>
+        <h1>{title}</h1>
+        <p className="muted">{text}</p>
+        <div className="error-actions">{children}</div>
+      </div>
+    </div>
+  )
+}export class ErrorBoundary extends Component {
   state = { failed: false }
   static getDerivedStateFromError() {
     return { failed: true }
@@ -203,25 +218,27 @@ export class ErrorBoundary extends Component {
   render() {
     if (!this.state.failed) return this.props.children
     return (
-      <div className="auth-page">
-        <div className="card auth-card">
-          <h2>Une erreur est survenue</h2>
-          <p className="muted">L'affichage a rencontré un problème. Rechargez la page ; si cela continue, contactez le support.</p>
-          <button className="btn" onClick={() => window.location.reload()}>Recharger</button>
-        </div>
-      </div>
-    )
-  }
+      <ErrorPage
+        code="Oups"
+        title="Une erreur est survenue"
+        text="L'affichage a rencontré un problème. Rechargez la page ; si cela continue, contactez le support."
+      >
+        <button className="btn" onClick={() => window.location.reload()}>Recharger la page</button>
+        <a className="btn secondary" href="/">Retour à l'accueil</a>
+      </ErrorPage>
+    )  }
 }
 
 export function NotFound({ home = '/' }) {
   return (
-    <div className="auth-page">
-      <div className="card auth-card">
-        <h2>Page introuvable</h2>
-        <p className="muted">Cette adresse n'existe pas ou a été déplacée.</p>
-        <a className="btn" href={home}>Retour à l'accueil</a>
-      </div>
-    </div>
+    <ErrorPage
+      code="404"
+      title="Page introuvable"
+      text="Cette adresse n'existe pas ou a été déplacée."
+    >
+      <code className="error-path">{window.location.pathname}</code>
+      <button className="btn secondary" onClick={() => window.history.back()}>Page précédente</button>
+      <a className="btn" href={home}>Retour à l'accueil</a>
+    </ErrorPage>
   )
 }

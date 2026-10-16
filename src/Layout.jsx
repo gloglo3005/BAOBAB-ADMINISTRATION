@@ -36,6 +36,7 @@ export default function Layout({ children }) {
               {link('/library/books', 'Livres')}
               {link('/library/members', 'Membres')}
               {link('/library/loans', 'Prêts')}
+              {link('/library/imports', 'Import CSV')}
               {link('/library/settings', 'Catégories & emplacements')}
             </>
           )}

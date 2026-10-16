@@ -1,17 +1,31 @@
-import { useState } from 'react'
+import InstallApp from './InstallApp'
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from './auth'
 import { useOrg } from './org'
+import { watchTables } from './responsiveTables'
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth()
   const { orgs, org, select } = useOrg()
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
+  useEffect(() => watchTables(), [])
+  useEffect(() => {
+    if (!open) return undefined
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = previous
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open])
   const link = (to, text, end) => (
     <NavLink to={to} end={end} onClick={close}>{text}</NavLink>
   )
-  const role = user.is_platform_admin ? 'Administrateur global' : 'Personnel'
+  const role = user.is_platform_admin ? 'Administrateur global' : org?.role === 'ADMIN' ? 'Responsable de structure' : 'Personnel'
 
   return (
     <div className="shell">
@@ -31,34 +45,41 @@ export default function Layout({ children }) {
           {link('/', 'Accueil', true)}
           {org?.library_module && (
             <>
-              <div className="nav-title">BibliothÃ¨que</div>
+              <div className="nav-title">Bibliothèque</div>
               {link('/library', 'Tableau de bord', true)}
               {link('/library/books', 'Livres')}
               {link('/library/members', 'Membres')}
-              {link('/library/loans', 'PrÃªts')}
+              {link('/library/loans', 'Prêts')}
               {link('/library/import', 'Import du catalogue')}
-              {link('/library/settings', 'ParamÃ¨tres')}
+              {link('/library/settings', 'Catégories & emplacements')}
             </>
           )}
           {org?.coworking_module && (
             <>
               <div className="nav-title">Coworking</div>
               {link('/coworking', "Vue d'ensemble", true)}
-              {link('/coworking/reservations', 'RÃ©servations')}
-              {link('/coworking/sessions', 'ArrivÃ©es / sorties')}
+              {link('/coworking/reservations', 'Réservations')}
+              {link('/coworking/sessions', 'Arrivées / sorties')}
               {link('/coworking/payments', 'Paiements')}
               {link('/coworking/customers', 'Clients')}
               {link('/coworking/resources', 'Zones & ressources')}
-              {link('/coworking/settings', 'ParamÃ¨tres & tarifs')}
+              {link('/coworking/rates', 'Tarifs')}
+              {link('/coworking/settings', 'Réglages')}
+            </>
+          )}
+          {org?.role === 'ADMIN' && (
+            <>
+              <div className="nav-title">Ma structure</div>
+              {link('/team', 'Équipe')}
+              {link('/settings', 'Paramètres')}
+              {link('/audit', "Journal d'audit")}
             </>
           )}
           {user.is_platform_admin && (
             <>
               <div className="nav-title">Plateforme</div>
-              {link('/platform', "Vue d'ensemble", true)}
-              {link('/platform/organizations', 'Structures')}
-              {link('/platform/users', 'Comptes')}
-              {link('/platform/audit', "Journal d'audit")}
+              {link('/platform', 'Structures', true)}
+              {link('/platform/audit', "Journal d'audit global")}
             </>
           )}
         </nav>
@@ -66,12 +87,17 @@ export default function Layout({ children }) {
         <div className="sidebar-foot">
           <strong>{user.first_name || user.email}</strong>
           <div>{role}</div>
-          <button className="btn btn-ghost btn-sm" onClick={logout}>Se dÃ©connecter</button>{' '}
-          <NavLink to="/password" style={{ color: '#b9cbbf', fontSize: '.8rem' }}>Mot de passe</NavLink>
+          <InstallApp />
+          <button className="btn btn-ghost btn-sm" onClick={logout}>Se déconnecter</button>
         </div>
       </aside>
+      {open && <div className="backdrop" onClick={close} aria-hidden="true" />}
+      <header className="mobile-bar">
+        <button className="btn btn-ghost" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Ouvrir le menu">☰ Menu</button>
+        <strong>Baobab</strong>
+        {org && <span>{org.name}</span>}
+      </header>
       <main className="main">
-        <button className="btn btn-ghost menu-toggle" onClick={() => setOpen(!open)}>â˜° Menu</button>
         {children}
       </main>
     </div>

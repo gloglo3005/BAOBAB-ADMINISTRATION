@@ -1,8 +1,8 @@
 // Service worker Baobab : l'application s'ouvre même avec une mauvaise connexion.
 // Seuls les fichiers du site (pages, scripts, styles, icônes) sont gardés. Les réponses de l'API
 // (données des lecteurs, des prêts, des paiements...) ne sont JAMAIS mises en cache.
-const VERSION = 'baobab-v1'
-const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/favicon.svg', '/icons/icon-192.png', '/icons/icon-512.png']
+const VERSION = 'baobab-v2'
+const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/favicon.png', '/icons/icon-192.png', '/icons/icon-512.png']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(VERSION).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()))

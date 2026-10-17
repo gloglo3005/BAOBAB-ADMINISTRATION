@@ -21,7 +21,7 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-page">
+    <div className="auth-page auth-split">
       <form className="card auth-card" onSubmit={submit}>
         <div className="auth-logo"><img src="/logo.png" alt="Baobab" /><small>Administration</small></div>
         <h2>Connexion</h2>

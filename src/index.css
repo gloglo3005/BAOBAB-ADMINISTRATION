@@ -167,3 +167,24 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--green-600);
 .auth-logo small { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .brand img { border-radius: 8px; }
 .error-logo { border-radius: 12px; }
+
+/* === Liens sans soulignement === */
+a { text-decoration: none; }
+a.btn, a.btn:hover, a.btn:focus, a.btn:active { text-decoration: none; }
+a.btn { display: inline-block; text-align: center; }
+p a:hover, td a:hover, .muted a:hover, .legal-card a:hover { text-decoration: underline; }
+
+/* === Connexion en deux colonnes (lot 2) === */
+@keyframes auth-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.auth-split > form { animation: auth-in .55s ease both; }
+@media (prefers-reduced-motion: reduce) { .auth-split > form { animation: none; } }
+@media (min-width: 900px) {
+  .auth-split { grid-template-columns: minmax(380px, 42%) 1fr; padding: 0; background: var(--bg); }
+  .auth-split > form { grid-column: 1; grid-row: 1; margin: 2rem auto; max-width: calc(100% - 3rem); }
+  .auth-split::after { content: ''; grid-column: 2; grid-row: 1; align-self: stretch; justify-self: stretch; min-height: 100vh; background: #14352b url('/baobab.svg') center 75% / cover no-repeat; }
+}
+@media (max-width: 899px) {
+  .auth-split { align-content: start; grid-template-rows: 210px auto; padding: 0 0 2rem; background: var(--bg); }
+  .auth-split::before { content: ''; grid-row: 1; justify-self: stretch; height: 210px; background: #14352b url('/baobab.svg') 50% 20% / 100% auto no-repeat; border-radius: 0 0 28px 28px; }
+  .auth-split > form { grid-row: 2; margin-top: -1.6rem; position: relative; max-width: calc(100% - 2rem); }
+}

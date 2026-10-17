@@ -6,6 +6,7 @@ import Layout from './Layout'
 import Login from './pages/Login'
 const ChangePassword = lazy(() => import('./pages/ChangePassword'))
 const Home = lazy(() => import('./pages/Home'))
+const Landing = lazy(() => import('./pages/Landing'))
 const Import = lazy(() => import('./pages/Import'))
 const ImportDetail = lazy(() => import('./pages/ImportDetail'))
 const Platform = lazy(() => import('./pages/Platform'))
@@ -49,13 +50,24 @@ const page = (el, opts) => (
   </Protected>
 )
 
+// Page d'accueil publique pour les visiteurs, tableau de bord pour le personnel connecté.
+function Root() {
+  const { user, status } = useAuth()
+  if (status === 'loading') return <div className="auth-page"><Loading /></div>
+  if (user && hasAdminAccess(user)) return page(<Home />)
+  return (
+    <Suspense fallback={<div className="auth-page"><Loading /></div>}>
+      <Landing />
+    </Suspense>
+  )
+}
 export default function App() {
   return (
     <Suspense fallback={<div className="auth-page"><Loading /></div>}>
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/password" element={<ChangePassword />} />
-      <Route path="/" element={page(<Home />)} />
+      <Route path="/" element={<Root />} />
       <Route path="/platform" element={page(<Platform />, { platform: true })} />
       <Route path="/platform/organizations/:id" element={page(<PlatformOrg />, { platform: true })} />
       <Route path="/platform/audit" element={page(<PlatformAudit />, { platform: true })} />

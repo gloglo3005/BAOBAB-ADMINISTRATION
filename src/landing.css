@@ -112,7 +112,7 @@
 .lp-cta-band p { color: #d3dfd5; max-width: 38em; margin: .9rem auto 1.8rem; line-height: 1.6; }
 .lp-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .6rem; padding: 1.4rem clamp(1rem, 5vw, 4rem) calc(1.4rem + env(safe-area-inset-bottom)); background: var(--green-900); color: #b9cbbf; font-size: .9rem; }
 .lp-footer a { color: #dbe6de; }
-.lp-footer a:hover { text-decoration: underline; }
+.lp-footer a:hover { text-decoration: none; }
 
 /* Respect des préférences : aucune animation */
 @media (prefers-reduced-motion: reduce) {
@@ -136,4 +136,9 @@
 }
 :root[data-theme="dark"] :is(.lp-ico, .lp-chip, .lp-pill) { color: var(--link); }
 :root[data-theme="dark"] .lp-panel-ochre .lp-chip { color: #e8bd7a; }
+/* Liens : jamais soulignes (texte simple, bouton, carte, menu), quel que soit l'etat */
+a, a:link, a:visited, a:hover, a:focus, a:focus-visible, a:active,
+.linklike, .linklike:hover, .linklike:focus {
+  text-decoration: none !important;
+}
 /* <<< baobab-ui-v2 <<< */

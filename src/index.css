@@ -172,7 +172,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--green-600);
 a { text-decoration: none; }
 a.btn, a.btn:hover, a.btn:focus, a.btn:active { text-decoration: none; }
 a.btn { display: inline-block; text-align: center; }
-p a:hover, td a:hover, .muted a:hover, .legal-card a:hover { text-decoration: underline; }
+p a:hover, td a:hover, .muted a:hover, .legal-card a:hover { text-decoration: none; }
 
 /* === Connexion en deux colonnes (lot 2) === */
 @keyframes auth-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
@@ -249,11 +249,8 @@ p a:hover, td a:hover, .muted a:hover, .legal-card a:hover { text-decoration: un
 .picker-list button:focus-visible { outline: 2px solid var(--link); outline-offset: -2px; background: var(--green-100); }
 .modal:focus { outline: none; }
 
-/* Liens : couleur + soulignement dans les textes (pas seulement la couleur) */
+/* Liens : couleur de lien, jamais de soulignement (voir aussi la regle commune en fin de bloc) */
 a { color: var(--link); }
-:where(p, li, .legal-card, .muted) a:not([class]) {
-  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
-}
 .btn-ghost { color: var(--link); }
 
 /* Couleurs de texte qui suivent le theme */
@@ -355,4 +352,12 @@ a { color: var(--link); }
 .sidebar-foot .foot-link { display: inline-block; margin: .35rem 0; color: #dbe6de; }
 .sidebar-foot .foot-link:hover, .sidebar-foot .foot-link.active { color: #fff; }
 .sidebar-foot .foot-link.active { font-weight: 700; }
+/* Liens : jamais soulignes (texte simple, bouton, carte, menu), quel que soit l'etat */
+a, a:link, a:visited, a:hover, a:focus, a:focus-visible, a:active,
+.linklike, .linklike:hover, .linklike:focus {
+  text-decoration: none !important;
+}
+/* Liens dans les textes : en gras et legerement attenues au survol (le soulignement n'est plus utilise) */
+:where(p, li, td, .legal-card, .muted) a:not([class]) { font-weight: 600; }
+:where(p, li, td, .legal-card, .muted) a:not([class]):hover { opacity: .8; }
 /* <<< baobab-ui-v2 <<< */

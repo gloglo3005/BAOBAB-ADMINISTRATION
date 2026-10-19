@@ -43,19 +43,36 @@ export function useAction() {
 }
 
 export function Loading({ label = 'Chargement…' }) {
-  return <p className="muted">{label}</p>
+  return (
+    <p className="muted loading" role="status" aria-live="polite">
+      <span className="spinner" aria-hidden="true" /> {label}
+    </p>
+  )
 }
 
 export function ErrorBox({ children }) {
   if (!children) return null
-  return <div className="alert alert-error">{children}</div>
+  return <div className="alert alert-error" role="alert">{children}</div>
 }
 
 export function Empty({ children = 'Aucun résultat.' }) {
   return <p className="empty">{children}</p>
 }
 
+// Titre de l'onglet du navigateur : « Page · Baobab ».
+export function usePageTitle(title) {
+  useEffect(() => {
+    if (typeof title !== 'string' || !title) return undefined
+    const previous = document.title
+    document.title = `${title} · Baobab`
+    return () => {
+      document.title = previous
+    }
+  }, [title])
+}
+
 export function PageHeader({ title, subtitle, children }) {
+  usePageTitle(title)
   return (
     <header className="page-header">
       <div>
@@ -92,23 +109,54 @@ export function Pager({ page, count, pageSize = 25, onPage }) {
   const pages = Math.max(1, Math.ceil(count / pageSize))
   if (count <= pageSize) return null
   return (
-    <div className="pager">
+    <nav className="pager" aria-label="Pagination">
       <button className="btn btn-ghost" disabled={page <= 1} onClick={() => onPage(page - 1)}>← Précédent</button>
       <span className="muted">Page {page} / {pages} · {count} éléments</span>
       <button className="btn btn-ghost" disabled={page >= pages} onClick={() => onPage(page + 1)}>Suivant →</button>
-    </div>
+    </nav>
   )
 }
 
 export function Modal({ title, onClose, children, wide }) {
+  const ref = useRef(null)
+  // Le focus entre dans la fenêtre à l'ouverture et revient au bouton d'origine à la fermeture.
   useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && onClose()
+    const previous = document.activeElement
+    const node = ref.current
+    if (node && !node.contains(document.activeElement)) {
+      ;(node.querySelector('input, select, textarea') || node).focus()
+    }
+    return () => {
+      if (previous && typeof previous.focus === 'function') previous.focus()
+    }
+  }, [])
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab' || !ref.current) return
+      const items = ref.current.querySelectorAll(
+        'a[href], button:not(:disabled), input:not(:disabled):not([type="hidden"]), select:not(:disabled), textarea:not(:disabled)',
+      )
+      if (items.length === 0) return
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
   return (
     <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className={`modal ${wide ? 'modal-wide' : ''}`} role="dialog" aria-modal="true" aria-label={title}>
+      <div ref={ref} tabIndex={-1} className={`modal ${wide ? 'modal-wide' : ''}`} role="dialog" aria-modal="true" aria-label={title}>
         <div className="modal-head">
           <h2>{title}</h2>
           <button className="icon-btn" onClick={onClose} aria-label="Fermer">×</button>
@@ -126,6 +174,37 @@ export function Field({ label: text, hint, children }) {
       {children}
       {hint && <small className="muted">{hint}</small>}
     </label>
+  )
+}
+
+// Champ mot de passe avec bouton Afficher / Masquer et alerte de verrouillage des majuscules.
+export function PasswordInput({ value, onChange, autoComplete = 'current-password', ...rest }) {
+  const [shown, setShown] = useState(false)
+  const [caps, setCaps] = useState(false)
+  return (
+    <>
+      <div className="pw-field">
+        <input
+          {...rest}
+          type={shown ? 'text' : 'password'}
+          value={value}
+          onChange={onChange}
+          autoComplete={autoComplete}
+          onKeyUp={(e) => setCaps(Boolean(e.getModifierState && e.getModifierState('CapsLock')))}
+          onBlur={() => setCaps(false)}
+        />
+        <button
+          type="button"
+          className="pw-toggle"
+          onClick={() => setShown((v) => !v)}
+          aria-pressed={shown}
+          aria-label={shown ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+        >
+          {shown ? 'Masquer' : 'Afficher'}
+        </button>
+      </div>
+      {caps && <small className="caps-hint" role="status">Verrouillage des majuscules activé</small>}
+    </>
   )
 }
 
@@ -194,36 +273,49 @@ export function useDebounced(value, delay = 300) {
   return debounced
 }
 
-// Évite la page blanche : une erreur d'affichage montre un message et un bouton pour recharger.
-function ErrorPage({ code, title, text, children }) {
+// Évite la page blanche : une erreur d'affichage montre un message et des boutons pour continuer.
+function ErrorPage({ code, title, text, children, alert }) {
+  usePageTitle(`${code} · ${title}`)
   return (
     <div className="error-page">
-      <div className="error-card">
+      <div className="error-card" role={alert ? 'alert' : undefined}>
         <img className="error-logo" src="/favicon.png" alt="" />
-        <p className="error-code">{code}</p>
+        <p className="error-code" aria-hidden="true">{code}</p>
         <h1>{title}</h1>
         <p className="muted">{text}</p>
         <div className="error-actions">{children}</div>
+        <p className="error-help muted">
+          Besoin d'aide ? Contactez votre structure (bibliothèque ou espace de coworking) en précisant la page concernée.
+        </p>
       </div>
     </div>
   )
-}export class ErrorBoundary extends Component {
-  state = { failed: false }
-  static getDerivedStateFromError() {
-    return { failed: true }
+}
+
+export class ErrorBoundary extends Component {
+  state = { failed: false, error: null }
+  static getDerivedStateFromError(error) {
+    return { failed: true, error }
+  }
+  componentDidCatch(error) {
+    console.error(error)
   }
   render() {
     if (!this.state.failed) return this.props.children
     return (
       <ErrorPage
+        alert
         code="Oups"
         title="Une erreur est survenue"
-        text="L'affichage a rencontré un problème. Rechargez la page ; si cela continue, contactez le support."
+        text="L'affichage a rencontré un problème. Vos données ne sont pas perdues : réessayez, ou rechargez la page."
       >
+        {import.meta.env.DEV && this.state.error && <code className="error-path">{String(this.state.error.message || this.state.error)}</code>}
+        <button className="btn secondary" onClick={() => this.setState({ failed: false, error: null })}>Réessayer</button>
         <button className="btn" onClick={() => window.location.reload()}>Recharger la page</button>
         <a className="btn secondary" href="/">Retour à l'accueil</a>
       </ErrorPage>
-    )  }
+    )
+  }
 }
 
 export function NotFound({ home = '/' }) {
@@ -231,7 +323,7 @@ export function NotFound({ home = '/' }) {
     <ErrorPage
       code="404"
       title="Page introuvable"
-      text="Cette adresse n'existe pas ou a été déplacée."
+      text="Cette adresse n'existe pas ou a été déplacée. Vérifiez l'adresse saisie ou revenez à l'accueil."
     >
       <code className="error-path">{window.location.pathname}</code>
       <button className="btn secondary" onClick={() => window.history.back()}>Page précédente</button>

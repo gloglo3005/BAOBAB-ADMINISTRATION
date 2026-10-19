@@ -87,6 +87,7 @@ export default function Layout({ children }) {
         <div className="sidebar-foot">
           <strong>{user.first_name || user.email}</strong>
           <div>{role}</div>
+          <NavLink to="/account" className="foot-link" onClick={close}>Mon compte</NavLink>
           <InstallApp />
           <button className="btn btn-ghost btn-sm" onClick={logout}>Se déconnecter</button>
         </div>

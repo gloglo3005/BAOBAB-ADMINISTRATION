@@ -202,25 +202,43 @@ p a:hover, td a:hover, .muted a:hover, .legal-card a:hover { text-decoration: un
 }
 
 /* >>> baobab-ui-v2 (genere par Update-BaobabUi.ps1, ne pas modifier a la main) >>> */
-/* Variables : palette partagee, rayons, ombres */
+/* Palette Baobab v2 : vert foret, ocre dore, creme chaud. Clair, sombre, ou choix de l'utilisateur. */
 :root {
   color-scheme: light dark;
+  --bg: #f6f3ea; --surface: #fffdf7; --text: #1f2a22; --muted: #5f695c; --line: #e3dcc9;
+  --green-900: #123a2c; --green-800: #1b5a43; --green-600: #1f7d58; --green-100: #e2f0e8;
+  --ochre: #d99a2b; --ochre-100: #fbf0d9;
+  --bad: #b3372b; --bad-100: #f9e1dd; --warn-100: #fbefcf; --info: #25628f; --info-100: #dcebf6;
   --sage: #e5ecdf; --sage-600: #8aa58f; --wood: #8a5a35; --ivory: #fffdf7;
   --cream: #f4efe2; --on-ochre: #1d1608; --ochre-light: #f1c27a;
   --side-hover: #21503c; --side-line: #2c5a45; --side-field: #0f2a1f;
-  --link: var(--green-600);
+  --link: #1f7d58; --accent-text: #1b5a43; --warn-text: #8a5a00; --info-text: #6d4a10;
   --focus: var(--ochre);
   --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px; --r-pill: 999px;
   --shadow-sm: 0 2px 8px rgba(22, 58, 43, .08);
   --shadow-md: 0 10px 28px rgba(22, 58, 43, .14);
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    --bg: #101913; --surface: #18221b; --text: #e8ece4; --muted: #a3ad9d; --line: #2a382e;
+    --green-900: #0c1a12; --green-800: #2a7f5a; --green-600: #4aa57c; --green-100: #20352a;
+    --ochre: #e0a53a; --ochre-100: #3a2e18;
+    --bad: #ff9a8c; --bad-100: #3d1f1b; --warn-100: #3a3016; --info: #7cb8e8; --info-100: #1b3243;
     --sage: #1c2a21; --ivory: #19221c; --wood: #c9955f;
-    --link: #6fc49a;
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, .3);
-    --shadow-md: 0 10px 28px rgba(0, 0, 0, .4);
+    --link: #6fc49a; --accent-text: #6fc49a; --warn-text: #f0c36b; --info-text: #e8bd7a;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, .3); --shadow-md: 0 10px 28px rgba(0, 0, 0, .4);
   }
+}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+    --bg: #101913; --surface: #18221b; --text: #e8ece4; --muted: #a3ad9d; --line: #2a382e;
+    --green-900: #0c1a12; --green-800: #2a7f5a; --green-600: #4aa57c; --green-100: #20352a;
+    --ochre: #e0a53a; --ochre-100: #3a2e18;
+    --bad: #ff9a8c; --bad-100: #3d1f1b; --warn-100: #3a3016; --info: #7cb8e8; --info-100: #1b3243;
+    --sage: #1c2a21; --ivory: #19221c; --wood: #c9955f;
+    --link: #6fc49a; --accent-text: #6fc49a; --warn-text: #f0c36b; --info-text: #e8bd7a;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, .3); --shadow-md: 0 10px 28px rgba(0, 0, 0, .4);
 }
 
 /* Accessibilite : focus clavier visible partout */
@@ -229,22 +247,22 @@ p a:hover, td a:hover, .muted a:hover, .legal-card a:hover { text-decoration: un
   outline-offset: 2px;
 }
 .picker-list button:focus-visible { outline: 2px solid var(--link); outline-offset: -2px; background: var(--green-100); }
+.modal:focus { outline: none; }
 
 /* Liens : couleur + soulignement dans les textes (pas seulement la couleur) */
 a { color: var(--link); }
-:where(p, .legal-card, .muted) a:not([class]) {
+:where(p, li, .legal-card, .muted) a:not([class]) {
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
 }
 .btn-ghost { color: var(--link); }
 
-/* Mode sombre : contrastes corriges */
-@media (prefers-color-scheme: dark) {
-  .stat .num, .tabs button.on, .subnav a.active, .avail.yes, .auth-card .brand,
-  .badge-ok, .alert-ok { color: var(--link); }
-  .error-actions .secondary { color: var(--link); border-color: var(--link); }
-  .badge-warn { color: #f0c36b; }
-  .alert-info { color: #e8bd7a; }
-}
+/* Couleurs de texte qui suivent le theme */
+.stat .num, .tabs button.on, .subnav a.active, .avail.yes, .auth-card .brand,
+.badge-ok, .alert-ok { color: var(--accent-text); }
+.error-actions .secondary { color: var(--accent-text); border-color: var(--accent-text); }
+.badge-warn { color: var(--warn-text); }
+.alert-info { color: var(--info-text); }
+.alert-error { color: var(--bad); }
 
 /* Boutons : transitions et etats */
 .btn, .btn-ghost, .icon-btn, .nav a, .topnav a, .subnav a, .tabs button {
@@ -274,13 +292,67 @@ a { color: var(--link); }
 /* Fenetres : apparition douce, pas de defilement qui traverse */
 @keyframes ui-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ui-pop  { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes ui-spin { to { transform: rotate(360deg); } }
 .modal-backdrop { animation: ui-fade .15s ease both; }
 .modal { animation: ui-pop .18s ease both; overscroll-behavior: contain; max-height: 90vh; max-height: 90dvh; box-shadow: var(--shadow-md); }
 
-/* Etat vide */
+/* Etat vide et chargement */
 .empty { border: 1px dashed var(--line); border-radius: var(--radius); }
+.loading { display: flex; align-items: center; gap: .5rem; }
+.spinner { display: inline-block; flex: none; width: 1.1rem; height: 1.1rem; border: 2px solid var(--line); border-top-color: var(--green-600); border-radius: 50%; animation: ui-spin .7s linear infinite; }
 
 /* Zones de securite (encoche, barre d'accueil iOS) */
 .net-banner { padding-top: calc(.45rem + env(safe-area-inset-top)); }
 .cookie-notice { bottom: calc(1rem + env(safe-area-inset-bottom)); }
+
+/* Champ mot de passe : Afficher / Masquer */
+.pw-field { position: relative; display: flex; }
+.pw-field input { flex: 1; min-width: 0; padding-right: 5.4rem; }
+.pw-toggle { position: absolute; right: .3rem; top: 50%; transform: translateY(-50%); background: none; border: 0; border-radius: 6px; padding: .35rem .55rem; font: inherit; font-size: .82rem; font-weight: 600; color: var(--link); cursor: pointer; }
+.pw-toggle:hover { background: var(--green-100); }
+.caps-hint { color: var(--warn-text); }
+
+/* Pages de connexion */
+.auth-help { margin-top: .9rem; font-size: .9rem; }
+.auth-help summary { cursor: pointer; color: var(--link); }
+.auth-help p { margin: .5rem 0 0; }
+.auth-foot { text-align: center; margin: 1rem 0 0; font-size: .85rem; }
+
+/* Page d'erreur */
+.error-card { box-shadow: var(--shadow-md); }
+.error-help { margin: 1.4rem 0 0; font-size: .82rem; }
+
+/* Politique de confidentialite */
+.legal-card { width: min(780px, 100%); }
+.legal-top { margin: 0 0 1rem; }
+.legal-card section { scroll-margin-top: 1rem; }
+.legal-toc { background: var(--green-100); border-radius: var(--radius); padding: .8rem 1rem; margin: 1rem 0 .5rem; }
+.legal-toc ol { margin: .4rem 0 0; padding-left: 1.3rem; columns: 2 220px; column-gap: 1.5rem; }
+.legal-toc li { margin: .15rem 0; break-inside: avoid; }
+.legal-summary { background: var(--ochre-100); border-radius: var(--radius); padding: .8rem 1rem .8rem 2rem; }
+.legal-summary li { margin: .3rem 0; }
+.legal-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.6rem; }
+.legal-card table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.legal-card th, .legal-card td { text-align: left; padding: .5rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.legal-card th { color: var(--muted); font-weight: 600; }
+@media print {
+  .legal-actions, .legal-top, .legal-toc, .cookie-notice, .net-banner { display: none !important; }
+  .legal-page { padding: 0; background: #fff; }
+  .legal-card { border: 0; box-shadow: none; color: #000; }
+}
+
+/* Page Compte / Parametres */
+.settings-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); align-items: start; }
+.settings-grid h2 { margin-bottom: .7rem; }
+.settings-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .8rem; }
+.settings-note { margin-top: .8rem; }
+.theme-choices { display: grid; gap: .5rem; }
+.theme-choice { display: flex; gap: .7rem; align-items: flex-start; padding: .65rem .8rem; border: 1px solid var(--line); border-radius: var(--r-md); cursor: pointer; }
+.theme-choice.on { border-color: var(--green-600); background: var(--green-100); }
+.theme-choice input { margin-top: .3rem; accent-color: var(--green-600); }
+.theme-choice > span { display: flex; flex-direction: column; }
+.theme-choice:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sidebar-foot .foot-link { display: inline-block; margin: .35rem 0; color: #dbe6de; }
+.sidebar-foot .foot-link:hover, .sidebar-foot .foot-link.active { color: #fff; }
+.sidebar-foot .foot-link.active { font-weight: 700; }
 /* <<< baobab-ui-v2 <<< */

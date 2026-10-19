@@ -5,6 +5,7 @@ import { useOrg } from './org'
 import Layout from './Layout'
 import Login from './pages/Login'
 const ChangePassword = lazy(() => import('./pages/ChangePassword'))
+const Account = lazy(() => import('./pages/Account'))
 const Home = lazy(() => import('./pages/Home'))
 const Landing = lazy(() => import('./pages/Landing'))
 const Import = lazy(() => import('./pages/Import'))
@@ -68,6 +69,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/password" element={<ChangePassword />} />
       <Route path="/" element={<Root />} />
+      <Route path="/account" element={page(<Account />)} />
       <Route path="/platform" element={page(<Platform />, { platform: true })} />
       <Route path="/platform/organizations/:id" element={page(<PlatformOrg />, { platform: true })} />
       <Route path="/platform/audit" element={page(<PlatformAudit />, { platform: true })} />

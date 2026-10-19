@@ -1,6 +1,7 @@
 import { get, post } from '../api'
 import { useOrg } from '../org'
-import { Badge, ErrorBox, Loading, PageHeader, dateTime, money, useAction, useFetch } from '../ui'
+import { Badge, ErrorBox, Loading, dateTime, money, useAction, useFetch } from '../ui'
+import PageBanner from '../PageBanner'
 
 export default function CwDashboard() {
   const { org, path } = useOrg()
@@ -12,7 +13,7 @@ export default function CwDashboard() {
   }
   return (
     <>
-      <PageHeader title="Coworking" subtitle={org.name} />
+      <PageBanner title="Coworking" subtitle={org.name} image="/images/coworking.webp" position="center 60%" />
       {loading && <Loading />}
       <ErrorBox>{action.error || error}</ErrorBox>
       {data && (

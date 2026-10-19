@@ -1,14 +1,15 @@
 import { Fragment } from 'react'
 import { get } from '../api'
 import { useOrg } from '../org'
-import { ErrorBox, Loading, PageHeader, label, useFetch } from '../ui'
+import { ErrorBox, Loading, label, useFetch } from '../ui'
+import PageBanner from '../PageBanner'
 
 export default function Dashboard() {
   const { org, path } = useOrg()
   const { data, loading, error } = useFetch(() => get(path('/dashboard/')), [org.id])
   return (
     <>
-      <PageHeader title="Bibliothèque" subtitle={org.name} />
+      <PageBanner title="Bibliothèque" subtitle={org.name} image="/images/bibliotheques.webp" />
       {loading && <Loading />}
       <ErrorBox>{error}</ErrorBox>
       {data && (

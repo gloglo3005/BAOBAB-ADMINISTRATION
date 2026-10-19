@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth'
 import { useOrg } from '../org'
-import { PageHeader } from '../ui'
+import PageBanner from '../PageBanner'
 
 export default function Home() {
   const { user } = useAuth()
   const { org } = useOrg()
   return (
     <>
-      <PageHeader title={`Bonjour ${user.first_name || ''}`.trim()} subtitle={user.email} />
+      <PageBanner title={`Bonjour ${user.first_name || ''}`.trim()} subtitle={user.email} image="/images/baobab-grove.webp" position="center 60%" />
       {user.is_platform_admin && (
         <div className="card" style={{ marginBottom: '1rem' }}>
           <h2>Administrateur global</h2>

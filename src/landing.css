@@ -87,13 +87,6 @@
 .lp-panel li { position: relative; padding-left: 1.7rem; line-height: 1.5; }
 .lp-panel li::before { content: ''; position: absolute; left: 0; top: .32rem; width: 1.05rem; height: 1.05rem; border-radius: 50%; background: var(--green-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") center / 70% no-repeat; }
 .lp-panel-ochre li::before { background-color: var(--ochre); }
-.lp-mock { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: .4rem .9rem; box-shadow: 0 10px 26px rgba(22, 58, 43, .08); }
-.lp-row { display: flex; justify-content: space-between; align-items: center; gap: .8rem; padding: .65rem 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
-.lp-row:last-child { border-bottom: 0; }
-.lp-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lp-row b { font-size: .72rem; padding: .15rem .55rem; border-radius: 999px; white-space: nowrap; }
-.lp-row b.ok { background: var(--green-100); color: var(--green-800); }
-.lp-row b.warn { background: var(--warn-100); color: #8a5a00; }
 
 /* Étapes */
 .lp-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; position: relative; }
@@ -126,3 +119,8 @@
   .lp *, .lp *::before, .lp *::after { animation: none !important; transition: none !important; }
   .lp-js [data-reveal] { opacity: 1; translate: none; }
 }
+/* === Photos réelles (lot photos) === */
+.lp-art img { object-position: center 40%; }
+.lp-photo { margin: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 3 / 2; box-shadow: 0 10px 26px rgba(22, 58, 43, .12); }
+.lp-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lp-cta-band.lp-cta-photo { background: linear-gradient(rgba(10, 32, 24, .58), rgba(10, 32, 24, .82)), url('/images/baobab-grove.webp') center 55% / cover no-repeat, #0f2c24; }

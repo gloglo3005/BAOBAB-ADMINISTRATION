@@ -28,12 +28,13 @@ Un compte staff de plusieurs structures choisit la structure active dans la barr
 Les modules (bibliothèque / coworking) apparaissent selon les drapeaux de la structure.
 
 ## Pages
-- Bibliothèque : tableau de bord, livres (+ exemplaires), membres, prêts, catégories et emplacements.
+- Bibliothèque : tableau de bord, livres (+ exemplaires), membres, prêts (retour et renouvellement), import du catalogue (CSV ou XLSX), catégories et emplacements.
 - Coworking : vue d'ensemble, réservations, arrivées/sorties, paiements, clients, zones et ressources.
-- Plateforme : point d'entrée vers l'admin Django (le backend n'a pas encore d'API admin globale).
+- Plateforme : création et gestion des structures (informations, modules, statut) et journal d'audit global. L'admin Django reste disponible sur `/global/`.
+- Responsable de structure : équipe, paramètres de la structure et journal d'audit.
 
 ## Structure
 `src/api.js` (client + JWT) · `src/auth.jsx` · `src/org.jsx` (structure active) · `src/ui.jsx` (composants) · `src/pages/`.
 
-## Pas encore fait
-Import CSV, renouvellement des prêts (routes backend à venir).
+## Limites actuelles
+Pas de test automatisé du front. Pas de « mot de passe oublié » (les e-mails ne sont pas encore branchés côté backend).

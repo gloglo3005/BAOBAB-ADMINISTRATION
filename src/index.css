@@ -181,10 +181,22 @@ p a:hover, td a:hover, .muted a:hover, .legal-card a:hover { text-decoration: un
 @media (min-width: 900px) {
   .auth-split { grid-template-columns: minmax(380px, 42%) 1fr; padding: 0; background: var(--bg); }
   .auth-split > form { grid-column: 1; grid-row: 1; margin: 2rem auto; max-width: calc(100% - 3rem); }
-  .auth-split::after { content: ''; grid-column: 2; grid-row: 1; align-self: stretch; justify-self: stretch; min-height: 100vh; background: #14352b url('/baobab.svg') center 75% / cover no-repeat; }
+  .auth-split::after { content: ''; grid-column: 2; grid-row: 1; align-self: stretch; justify-self: stretch; min-height: 100vh; background: #14352b url('/images/baobab-arbre.webp') center 35% / cover no-repeat; }
 }
 @media (max-width: 899px) {
   .auth-split { align-content: start; grid-template-rows: 210px auto; padding: 0 0 2rem; background: var(--bg); }
-  .auth-split::before { content: ''; grid-row: 1; justify-self: stretch; height: 210px; background: #14352b url('/baobab.svg') 50% 20% / 100% auto no-repeat; border-radius: 0 0 28px 28px; }
+  .auth-split::before { content: ''; grid-row: 1; justify-self: stretch; height: 210px; background: #14352b url('/images/baobab-grove.webp') 50% 60% / cover no-repeat; border-radius: 0 0 28px 28px; }
   .auth-split > form { grid-row: 2; margin-top: -1.6rem; position: relative; max-width: calc(100% - 2rem); }
+}
+/* === Bandeaux photo (lot photos) === */
+.banner { position: relative; overflow: hidden; border-radius: 16px; margin-bottom: 1.4rem; color: #fff; background: #14352b var(--banner-img) var(--banner-pos, center) / cover no-repeat; box-shadow: 0 10px 28px rgba(22, 58, 43, .14); }
+.banner::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(12, 34, 24, .82) 0%, rgba(12, 34, 24, .5) 52%, rgba(12, 34, 24, .1) 100%); }
+.banner-in { position: relative; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; min-height: 150px; padding: clamp(1.2rem, 3.5vw, 2rem) clamp(1rem, 3vw, 1.8rem); }
+.banner h1 { color: #fff; text-shadow: 0 1px 8px rgba(0, 0, 0, .25); }
+.banner .banner-sub { margin: .25rem 0 0; color: rgba(255, 255, 255, .88); font-size: .95rem; }
+.banner .btn-ghost { color: #fff; border-color: rgba(255, 255, 255, .55); }
+@media (max-width: 720px) {
+  .banner { border-radius: 14px; }
+  .banner::before { background: linear-gradient(0deg, rgba(12, 34, 24, .86) 0%, rgba(12, 34, 24, .3) 100%); }
+  .banner-in { min-height: 124px; }
 }

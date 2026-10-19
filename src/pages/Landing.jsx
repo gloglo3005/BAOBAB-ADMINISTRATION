@@ -120,7 +120,10 @@ export default function Landing() {
             </div>
           </div>
           <div className="lp-art lp-rise" style={{ '--d': '200ms' }}>
-            <img src="/baobab.svg" alt="Un baobab au coucher du soleil sur la savane" />
+            <picture>
+              <source media="(max-width: 900px)" srcSet="/images/baobab-grove.webp" />
+              <img src="/images/baobab-arbre.webp" alt="Un baobab majestueux dressé au bord de l’eau, sous un ciel bleu" width="800" height="1200" fetchPriority="high" decoding="async" />
+            </picture>
           </div>
         </div>
         <a href="#fonctions" onClick={goTo('fonctions')} className="lp-scroll" aria-label="Faire défiler vers les fonctions"><span /></a>
@@ -156,11 +159,9 @@ export default function Landing() {
                 <li>Membres, inscriptions et suspensions</li>
                 <li>Import du catalogue depuis un fichier CSV</li>
               </ul>
-              <div className="lp-mock" aria-hidden="true">
-                <div className="lp-row"><span>Une si longue lettre</span><b className="ok">Disponible</b></div>
-                <div className="lp-row"><span>L’Aventure ambiguë</span><b className="warn">Prêté</b></div>
-                <div className="lp-row"><span>Les Soleils des indépendances</span><b className="ok">Disponible</b></div>
-              </div>
+              <figure className="lp-photo">
+                <img src="/images/bibliotheques.webp" alt="De grandes étagères en bois remplies de livres" width="1600" height="640" loading="lazy" decoding="async" />
+              </figure>
             </article>
             <article className="lp-panel lp-panel-ochre" data-reveal style={{ '--d': '120ms' }}>
               <span className="lp-chip">Module</span>
@@ -171,11 +172,9 @@ export default function Landing() {
                 <li>Arrivées, sorties et suivi de présence</li>
                 <li>Tarifs et enregistrement des paiements</li>
               </ul>
-              <div className="lp-mock" aria-hidden="true">
-                <div className="lp-row"><span>Salle Kapok · 09:00–12:00</span><b className="ok">Confirmée</b></div>
-                <div className="lp-row"><span>Poste 4 · Journée</span><b className="warn">En attente</b></div>
-                <div className="lp-row"><span>Espace ouvert · 14:00–18:00</span><b className="ok">Confirmée</b></div>
-              </div>
+              <figure className="lp-photo">
+                <img src="/images/coworking.webp" alt="Un grand espace de travail partagé avec de longues tables en bois" width="1000" height="750" loading="lazy" decoding="async" />
+              </figure>
             </article>
           </div>
         </div>
@@ -208,7 +207,7 @@ export default function Landing() {
       </section>
 
       <section className="lp-section lp-final">
-        <div className="lp-cta-band" data-reveal>
+        <div className="lp-cta-band lp-cta-photo" data-reveal>
           <h2>Prêt à ouvrir vos portes ?</h2>
           <p>Connectez-vous pour gérer votre structure. L’accès est réservé au personnel des structures et à l’administrateur de la plateforme.</p>
           <Link to="/login" className="btn btn-ochre btn-lg">Se connecter</Link>
